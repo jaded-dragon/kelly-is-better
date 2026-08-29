@@ -228,7 +228,7 @@ export function ParallaxBackground() {
         style={{ height: '55vh' }}
       >
         <img
-          src="/silhouettes/mountain-far.svg"
+          src={`${import.meta.env.BASE_URL}silhouettes/mountain-far.svg`}
           alt=""
           className="w-full h-full object-bottom object-cover"
           style={{ transform: 'scaleX(1.1)' }}
@@ -242,7 +242,7 @@ export function ParallaxBackground() {
         style={{ height: '50vh' }}
       >
         <img
-          src="/silhouettes/mountain-mid.svg"
+          src={`${import.meta.env.BASE_URL}silhouettes/mountain-mid.svg`}
           alt=""
           className="w-full h-full object-bottom object-cover"
           style={{ transform: 'scaleX(1.05)' }}
@@ -256,7 +256,7 @@ export function ParallaxBackground() {
         style={{ height: '16vh' }}
       >
         <img
-          src="/silhouettes/ground.svg"
+          src={`${import.meta.env.BASE_URL}silhouettes/ground.svg`}
           alt=""
           className="w-full h-full object-bottom object-cover"
         />
@@ -269,7 +269,7 @@ export function ParallaxBackground() {
         style={{ height: '30vh' }}
       >
         <img
-          src="/silhouettes/trees-far.svg"
+          src={`${import.meta.env.BASE_URL}silhouettes/trees-far.svg`}
           alt=""
           className="w-full h-full object-bottom object-cover"
         />
