@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 400" preserveAspectRatio="xMidYMax slice">
+  <defs>
+    <linearGradient id="farBack" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2F6B4A"/>
+      <stop offset="100%" stop-color="#7FC08F"/>
+    </linearGradient>
+    <linearGradient id="farFront" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#25593C"/>
+      <stop offset="100%" stop-color="#6BAF7C"/>
+    </linearGradient>
+  </defs>
+  <path d="M0,400 C90,240 180,190 280,220 C380,250 430,150 530,140 C630,130 690,220 790,210 C890,200 940,120 1040,130 C1140,140 1190,230 1290,215 C1360,205 1410,240 1440,260 L1440,400 L0,400 Z" fill="url(#farBack)"/>
+  <path d="M0,400 C70,300 160,260 260,280 C360,300 400,220 500,210 C600,200 650,270 750,260 C850,250 890,180 990,190 C1090,200 1130,270 1230,255 C1310,245 1390,270 1440,290 L1440,400 L0,400 Z" fill="url(#farFront)"/>
+</svg>

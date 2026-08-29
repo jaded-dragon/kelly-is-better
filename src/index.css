@@ -1,0 +1,176 @@
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400&family=Inter:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+:root {
+  --forest: #56A86E;
+  --sage: #7AB48A;
+  --moss: #4A6E4A;
+  --earth: #ECE7DF;
+  --bark: #8A7A60;
+  --sand: #685840;
+  --mauve: #D48898;
+  --blush: #1C1224;
+  --sky: #080C12;
+  --cream: #0B1009;
+  --midnight: #F0EAE0;
+}
+
+@theme {
+  --color-forest: #56A86E;
+  --color-sage: #7AB48A;
+  --color-moss: #4A6E4A;
+  --color-earth: #ECE7DF;
+  --color-bark: #8A7A60;
+  --color-sand: #685840;
+  --color-mauve: #D48898;
+  --color-blush: #1C1224;
+  --color-sky: #080C12;
+  --color-cream: #0B1009;
+  --color-midnight: #F0EAE0;
+
+  --font-sans: 'Inter', system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--cream);
+  color: var(--earth);
+  font-family: 'Inter', system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--cream);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.15);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.28);
+}
+
+/* Tooltip fade animation */
+@keyframes tooltipIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.tooltip-enter {
+  animation: tooltipIn 0.18s ease-out forwards;
+}
+
+/* Checkbox bounce animation */
+@keyframes checkBounce {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.25); }
+  70% { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+
+.check-bounce {
+  animation: checkBounce 0.35s ease-out forwards;
+}
+
+/* ── Cartoon background motion ── */
+@keyframes sun-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.95; }
+  50% { transform: scale(1.08); opacity: 1; }
+}
+
+/* vw units, not %, so drift spans the actual viewport — % in transform is
+   relative to the element's own (tiny) width, which barely moves it at all */
+@keyframes cloud-drift {
+  from { transform: translateX(-22vw); }
+  to { transform: translateX(122vw); }
+}
+
+@keyframes bird-drift {
+  0% { transform: translate(-12vw, 0); }
+  25% { transform: translate(28vw, -18px); }
+  50% { transform: translate(58vw, 8px); }
+  75% { transform: translate(88vw, -14px); }
+  100% { transform: translate(118vw, 0); }
+}
+
+@keyframes bird-flap {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.7); }
+}
+
+@keyframes particle-rise {
+  0% { transform: translateY(0) scale(0.8); opacity: 0; }
+  12% { opacity: 0.9; }
+  50% { transform: translateY(-60px) scale(1.1); opacity: 1; }
+  88% { opacity: 0.4; }
+  100% { transform: translateY(-130px) scale(0.8); opacity: 0; }
+}
+
+.bg-cloud {
+  position: absolute;
+  animation: cloud-drift linear infinite;
+}
+
+.bg-bird {
+  position: absolute;
+  animation: bird-drift ease-in-out infinite;
+}
+
+.bg-bird svg {
+  animation: bird-flap 0.35s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.bg-sun {
+  position: absolute;
+  border-radius: 9999px;
+  animation: sun-pulse 4.5s ease-in-out infinite;
+}
+
+.bg-particle {
+  position: absolute;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.9);
+  animation: particle-rise ease-in-out infinite;
+}
+
+/* Depth marker line */
+.depth-marker {
+  border: none;
+  border-top: 1px dashed rgba(255,255,255,0.15);
+  position: relative;
+}
+
+.depth-marker::after {
+  content: attr(data-label);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--cream);
+  padding: 0 1rem;
+  font-size: 0.7rem;
+  color: var(--bark);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
