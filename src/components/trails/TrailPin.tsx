@@ -16,9 +16,10 @@ interface TrailPinProps {
   trail: Trail
   isHiked: boolean
   onToggleHiked: (id: string) => void
+  isRight?: boolean
 }
 
-export function TrailPin({ trail, isHiked, onToggleHiked }: TrailPinProps) {
+export function TrailPin({ trail, isHiked, onToggleHiked, isRight = false }: TrailPinProps) {
   const [hovered, setHovered] = useState(false)
   const [tooltipBelow, setTooltipBelow] = useState(false)
   const pinRef = useRef<HTMLDivElement>(null)
@@ -74,9 +75,13 @@ export function TrailPin({ trail, isHiked, onToggleHiked }: TrailPinProps) {
       <div className="flex items-center gap-3 pl-2">
         {/* Name + location */}
         <div className="min-w-0" style={{ maxWidth: 'min(42vw, 220px)' }}>
-          <p
-            className="font-medium whitespace-nowrap overflow-hidden transition-colors duration-150"
-            title={trail.name}
+          <a
+            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${trail.name}, ${trail.location}`)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={e => e.stopPropagation()}
+            className="font-medium whitespace-nowrap overflow-hidden transition-colors duration-150 block"
+            title={`Open ${trail.name} in Google Maps`}
             style={{
               color: hovered ? 'var(--forest)' : isHiked ? 'var(--sage)' : 'var(--earth)',
               fontSize: '0.95rem',
@@ -85,10 +90,11 @@ export function TrailPin({ trail, isHiked, onToggleHiked }: TrailPinProps) {
               textDecorationColor: 'var(--moss)',
               textUnderlineOffset: '3px',
               opacity: isHiked ? 0.7 : 1,
+              cursor: 'pointer',
             }}
           >
             {trail.name}
-          </p>
+          </a>
           <p
             className="text-xs whitespace-nowrap overflow-hidden"
             title={trail.location}
@@ -124,7 +130,7 @@ export function TrailPin({ trail, isHiked, onToggleHiked }: TrailPinProps) {
       </div>
 
       {/* Tooltip */}
-      {hovered && <TrailTooltip trail={trail} below={tooltipBelow} />}
+      {hovered && <TrailTooltip trail={trail} below={tooltipBelow} alignRight={isRight} />}
     </div>
   )
 }

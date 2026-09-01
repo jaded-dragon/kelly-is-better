@@ -351,16 +351,6 @@ export default function App() {
       {(location || loading || error) && (
         <div ref={resultsRef} style={{ position: 'relative', paddingTop: '3rem', paddingBottom: '4rem' }}>
 
-          {/* Location name */}
-          {location && (
-            <p className="text-xs text-center pb-1" style={{ color: 'var(--bark)' }}>
-              Showing trails near{' '}
-              <span className="font-medium" style={{ color: 'var(--earth)' }}>
-                {location.displayName.split(',').slice(0, 2).join(',')}
-              </span>
-            </p>
-          )}
-
           {/* Banners */}
           <div className="max-w-2xl mx-auto px-6 pt-2">
             {isDemo && !error && (
@@ -406,14 +396,27 @@ export default function App() {
 
           {/* Footer */}
           {!loading && !error && trails.length > 0 && (
-            <p
-              className="text-center text-xs pb-12"
-              style={{ color: 'var(--sage)', letterSpacing: '0.08em' }}
-            >
-              {hikedIds.size > 0 &&
-                `${hikedIds.size} trail${hikedIds.size === 1 ? '' : 's'} hiked · `}
-              {isDemo ? 'Sample trail data' : 'Trail data from OpenStreetMap contributors'}
-            </p>
+            <div className="text-center pb-12">
+              <p
+                className="text-xs"
+                style={{ color: 'var(--earth)', letterSpacing: '0.08em', textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}
+              >
+                {hikedIds.size > 0 &&
+                  `${hikedIds.size} trail${hikedIds.size === 1 ? '' : 's'} hiked · `}
+                {isDemo ? 'Sample trail data' : 'Trail data from OpenStreetMap contributors'}
+              </p>
+              {location && (
+                <p
+                  className="text-xs mt-1"
+                  style={{ color: 'rgba(236,231,223,0.8)', textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}
+                >
+                  Showing trails near{' '}
+                  <span className="font-medium" style={{ color: 'var(--earth)' }}>
+                    {location.displayName.split(',').slice(0, 2).join(',')}
+                  </span>
+                </p>
+              )}
+            </div>
           )}
         </div>
       )}

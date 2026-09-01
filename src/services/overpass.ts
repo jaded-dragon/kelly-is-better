@@ -81,14 +81,32 @@ async function queryWays(lat: number, lng: number, radiusMeters: number): Promis
 
   const data = await queryOverpass(query)
 
-  return data.elements
+  const named = data.elements
     .filter((w): w is Required<OverpassWay> => !!w.tags?.name && !!w.geometry && w.geometry.length >= 2)
     .filter(w => !STREET_NAME_PATTERN.test(w.tags.name))
+
+  return dedupeByName(named)
     .sort((a, b) =>
       haversineKm(lat, lng, a.geometry[0].lat, a.geometry[0].lon) -
       haversineKm(lat, lng, b.geometry[0].lat, b.geometry[0].lon),
     )
     .slice(0, MAX_TRAILS)
+}
+
+// OSM frequently maps one named trail as several adjoining "way" segments
+// (e.g. a long trail split at road crossings), each with its own id but the
+// same name — without this they'd show up as separate duplicate trail cards.
+// Keep the longest segment per name as the trail's representative geometry.
+function dedupeByName(ways: Required<OverpassWay>[]): Required<OverpassWay>[] {
+  const byName = new Map<string, Required<OverpassWay>>()
+  for (const way of ways) {
+    const key = way.tags.name.trim().toLowerCase()
+    const existing = byName.get(key)
+    if (!existing || pathLengthKm(way.geometry) > pathLengthKm(existing.geometry)) {
+      byName.set(key, way)
+    }
+  }
+  return [...byName.values()]
 }
 
 async function queryOverpass(query: string): Promise<{ elements: OverpassWay[] }> {

@@ -140,16 +140,74 @@ body {
   transform-origin: center;
 }
 
+/* vw units for the same reason as cloud-drift/bird-drift above — % would be
+   relative to the deer's own tiny width and barely move it at all. */
+@keyframes deer-walk {
+  from { transform: translateX(-12vw); }
+  to { transform: translateX(112vw); }
+}
+
+@keyframes deer-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+@keyframes deer-leg-swing {
+  0%, 100% { transform: rotate(-10deg); }
+  50% { transform: rotate(10deg); }
+}
+
+.bg-deer {
+  position: absolute;
+  animation: deer-walk 85s linear infinite;
+}
+
+.deer-bob {
+  animation: deer-bob 0.5s ease-in-out infinite;
+}
+
+.deer-leg {
+  animation: deer-leg-swing 0.5s ease-in-out infinite;
+}
+
 .bg-sun {
   position: absolute;
   border-radius: 9999px;
   animation: sun-pulse 4.5s ease-in-out infinite;
 }
 
+@keyframes moon-glow {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+
+.bg-moon {
+  position: absolute;
+  border-radius: 9999px;
+  animation: moon-glow 6s ease-in-out infinite;
+}
+
+@keyframes star-twinkle {
+  0%, 100% { opacity: 0.3; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+.bg-star {
+  position: absolute;
+  border-radius: 9999px;
+  background: #FFFFFF;
+  box-shadow: 0 0 4px 1px rgba(255,255,255,0.8);
+  animation: star-twinkle ease-in-out infinite;
+}
+
 .bg-particle {
   position: absolute;
   border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.9);
+  background: #FFFFFF;
+  box-shadow:
+    0 0 3px 1.5px rgba(255,255,255,1),
+    0 0 6px 3px rgba(233,255,120,1),
+    0 0 11px 5.5px rgba(210,255,70,0.9);
   animation: particle-rise ease-in-out infinite;
 }
 

@@ -7,7 +7,7 @@
       <path d="M35,76 C17,96 8,110 4,120 C17,115 26,115 35,118 C44,115 53,115 66,120 C62,110 53,96 35,76 Z" fill="currentColor"/>
     </symbol>
   </defs>
-  <g color="#12291B" opacity="0.9">
+  <g color="#12291B">
     <use href="#pineFg" x="-20" y="60" width="150" height="280"/>
     <use href="#pineFg" x="230" y="90" width="110" height="205"/>
     <use href="#pineFg" x="520" y="70" width="135" height="251"/>
@@ -15,7 +15,7 @@
     <use href="#pineFg" x="1120" y="65" width="140" height="260"/>
     <use href="#pineFg" x="1360" y="85" width="115" height="214"/>
   </g>
-  <g color="#0A1B11" opacity="0.95">
+  <g color="#0A1B11">
     <use href="#pineFg" x="90" y="130" width="120" height="223"/>
     <use href="#pineFg" x="380" y="150" width="95" height="177"/>
     <use href="#pineFg" x="680" y="125" width="125" height="232"/>

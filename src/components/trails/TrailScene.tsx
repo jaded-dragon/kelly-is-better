@@ -7,7 +7,7 @@ import { formatDistance } from '../../utils/distance'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const ITEM_HEIGHT = 220   // px between each trail pin
+const ITEM_HEIGHT = 340   // px between each trail pin
 const START_OFFSET = 260  // px from top before first pin (header clearance)
 
 // Distance thresholds in miles for depth markers
@@ -124,6 +124,7 @@ export function TrailScene({ trails, hikedIds, onToggleHiked }: TrailSceneProps)
                 trail={trail}
                 isHiked={hikedIds.has(trail.id)}
                 onToggleHiked={onToggleHiked}
+                isRight={isRight}
               />
             </div>
           </div>
