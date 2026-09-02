@@ -10,13 +10,13 @@ function spreadDelay(duration: number, fraction: number) {
 }
 
 const CLOUDS = [
-  { top: '4%', width: 130, duration: 20, fraction: 0.05, dir: 'normal', opacity: 0.9, variant: 0 },
-  { top: '11%', width: 90, duration: 17, fraction: 0.2, dir: 'reverse', opacity: 0.85, variant: 2 },
-  { top: '19%', width: 145, duration: 24, fraction: 0.35, dir: 'normal', opacity: 0.75, variant: 1 },
-  { top: '27%', width: 80, duration: 15, fraction: 0.5, dir: 'reverse', opacity: 0.8, variant: 3 },
-  { top: '8%', width: 115, duration: 22, fraction: 0.65, dir: 'normal', opacity: 0.65, variant: 2 },
-  { top: '33%', width: 100, duration: 18, fraction: 0.78, dir: 'reverse', opacity: 0.7, variant: 0 },
-  { top: '16%', width: 70, duration: 14, fraction: 0.9, dir: 'normal', opacity: 0.6, variant: 1 },
+  { top: '4%', width: 130, duration: 25, fraction: 0.05, dir: 'normal', opacity: 0.9, variant: 0 },
+  { top: '11%', width: 90, duration: 21, fraction: 0.2, dir: 'reverse', opacity: 0.85, variant: 2 },
+  { top: '19%', width: 145, duration: 30, fraction: 0.35, dir: 'normal', opacity: 0.75, variant: 1 },
+  { top: '27%', width: 80, duration: 19, fraction: 0.5, dir: 'reverse', opacity: 0.8, variant: 3 },
+  { top: '8%', width: 115, duration: 27, fraction: 0.65, dir: 'normal', opacity: 0.65, variant: 2 },
+  { top: '33%', width: 100, duration: 22, fraction: 0.78, dir: 'reverse', opacity: 0.7, variant: 0 },
+  { top: '16%', width: 70, duration: 18, fraction: 0.9, dir: 'normal', opacity: 0.6, variant: 1 },
 ] as const
 
 const BIRDS = [
@@ -28,29 +28,52 @@ const BIRDS = [
   { top: '18%', duration: 14, fraction: 0.88, dir: 'reverse' },
 ] as const
 
+// Fireflies gather near the pond at night (real fireflies cluster around
+// standing water) — most of the field sits in a band around the pond's new
+// left-edge-bleeding position (see POND below), with a thinner scatter of
+// ambient ones across the rest of the ground so the scene doesn't look like
+// they're glued to one spot.
 const PARTICLES = [
-  { left: '3%', bottom: '6%', size: 0.8, duration: 9, delay: -1 },
-  { left: '9%', bottom: '13%', size: 0.5, duration: 12, delay: -4 },
-  { left: '14%', bottom: '4%', size: 0.7, duration: 8, delay: -6 },
-  { left: '19%', bottom: '10%', size: 0.5, duration: 11, delay: -5.5 },
-  { left: '23%', bottom: '17%', size: 1, duration: 11, delay: -2 },
-  { left: '28%', bottom: '7%', size: 0.5, duration: 10, delay: -8.5 },
-  { left: '33%', bottom: '14%', size: 0.7, duration: 10, delay: -8 },
-  { left: '38%', bottom: '5%', size: 0.5, duration: 12, delay: -3.5 },
-  { left: '43%', bottom: '11%', size: 0.8, duration: 13, delay: -3 },
-  { left: '48%', bottom: '18%', size: 0.5, duration: 9, delay: -6.5 },
-  { left: '53%', bottom: '6%', size: 0.7, duration: 9, delay: -7 },
-  { left: '58%', bottom: '15%', size: 0.5, duration: 11, delay: -1.5 },
-  { left: '62%', bottom: '9%', size: 0.8, duration: 11, delay: -5 },
-  { left: '67%', bottom: '16%', size: 0.5, duration: 8, delay: -4.5 },
-  { left: '72%', bottom: '4%', size: 1, duration: 8, delay: -1 },
-  { left: '77%', bottom: '12%', size: 0.5, duration: 10, delay: -9.5 },
-  { left: '82%', bottom: '7%', size: 0.7, duration: 12, delay: -9 },
-  { left: '86%', bottom: '19%', size: 0.5, duration: 9, delay: -2.5 },
-  { left: '90%', bottom: '5%', size: 0.8, duration: 10, delay: -6 },
-  { left: '94%', bottom: '13%', size: 0.5, duration: 9, delay: -3 },
-  { left: '97%', bottom: '8%', size: 0.7, duration: 11, delay: -7.5 },
+  // Pond cluster
+  { left: '0%', bottom: '5%', size: 0.7, duration: 8, delay: -2 },
+  { left: '2%', bottom: '10%', size: 0.5, duration: 10, delay: -5 },
+  { left: '5%', bottom: '4%', size: 0.8, duration: 9, delay: -1 },
+  { left: '1%', bottom: '16%', size: 0.5, duration: 11, delay: -7 },
+  { left: '8%', bottom: '8%', size: 0.7, duration: 8, delay: -3.5 },
+  { left: '12%', bottom: '13%', size: 0.5, duration: 10, delay: -6 },
+  { left: '4%', bottom: '20%', size: 0.8, duration: 9, delay: -8.5 },
+  { left: '10%', bottom: '3%', size: 0.5, duration: 12, delay: -4 },
+  { left: '14%', bottom: '18%', size: 0.7, duration: 9, delay: -2.5 },
+  { left: '0%', bottom: '22%', size: 0.5, duration: 11, delay: -9 },
+  { left: '7%', bottom: '24%', size: 1, duration: 10, delay: -1.5 },
+  { left: '15%', bottom: '7%', size: 0.5, duration: 8, delay: -6.5 },
+  { left: '3%', bottom: '26%', size: 0.7, duration: 12, delay: -3 },
+  // Ambient scatter elsewhere
+  { left: '34%', bottom: '8%', size: 0.5, duration: 10, delay: -2 },
+  { left: '42%', bottom: '14%', size: 0.6, duration: 9, delay: -5 },
+  { left: '50%', bottom: '6%', size: 0.5, duration: 11, delay: -7 },
+  { left: '58%', bottom: '12%', size: 0.7, duration: 9, delay: -3 },
+  { left: '66%', bottom: '17%', size: 0.5, duration: 10, delay: -8 },
+  { left: '76%', bottom: '10%', size: 0.6, duration: 9, delay: -4 },
+  { left: '85%', bottom: '15%', size: 0.5, duration: 11, delay: -6 },
+  { left: '93%', bottom: '7%', size: 0.7, duration: 10, delay: -1 },
 ]
+
+// Pond — a still-water spot bleeding off the bottom-left corner of the
+// screen (left/bottom are raw negative vh offsets on the pond's own box, not
+// a centered position, so the crop amount stays proportional to the pond's
+// size at any window size instead of drifting with viewport aspect ratio).
+// The outer ParallaxBackground container clips it with overflow-hidden.
+// Position is shared with the firefly cluster above so the two stay lined
+// up if this ever moves. `viewBoxW`/`viewBoxH` size the lobes drawn in
+// Pond() below (and give it its aspect ratio). `heightVh` + `bottom`
+// together are kept well under GROUND_VH.start (the ground layer's
+// shortest on-screen height, at scroll position 0) so the pond's top edge
+// always sits inside the grass, never poking up into the mountains — both
+// are sized in viewport-height units, so the margin holds at any window
+// size instead of only on tall screens.
+const POND = { left: '-8vh', bottom: '-3vh', heightVh: 12, viewBoxW: 500, viewBoxH: 110 }
+const POND_WIDTH_VH = POND.heightVh * (POND.viewBoxW / POND.viewBoxH)
 
 // ── Day/night cycle ──────────────────────────────────────────────────────
 // The sky loops through a full day every CYCLE_VH viewport-heights of
@@ -78,29 +101,29 @@ const STOP_OFFSETS = [0, 25, 50, 75, 100]
 const CYCLE_VH = 10 // viewport-heights of scroll per full day/night cycle
 
 // ── Mountain-layer parallax ──────────────────────────────────────────────
-// Each layer drifts upward by a fraction of its OWN height (not the
-// viewport's) — otherwise a short/fast layer like the ground strip gets
-// pushed by a viewport-relative offset far larger than its own height and
-// detaches from the bottom edge, revealing a gap and sliding into the
-// middle of the screen on any long page (this happened for real: ground
-// and the foreground trees are only 16vh/30vh tall, so a couple of
-// viewport-heights of scroll was enough to shove them well above where
-// they belonged). Bounding the shift to each layer's own height means it
+// Each translating layer drifts upward by a fraction of its OWN height (not
+// the viewport's) — otherwise a short/fast layer gets pushed by a
+// viewport-relative offset far larger than its own height and detaches from
+// the bottom edge, revealing a gap and sliding into the middle of the screen
+// on any long page. Bounding the shift to each layer's own height means it
 // can never detach, no matter how long the trail list makes the page.
 // The shift itself ramps up over the first PARALLAX_VH viewport-heights of
 // scroll, then holds — parallax reads as a one-time "settling into the
-// scene" cue, not something that needs to keep animating forever.
+// scene" cue, not something that needs to keep animating forever. The
+// ground layer grows taller over that same span instead of translating (see
+// GROUND_VH below) — it's the one true anchor glued to the exact viewport
+// bottom, and growing it upward (rather than moving it) is what lets every
+// other layer's upward drift close cleanly against it with no gap at the
+// bottom edge, while still making the whole scene read as more ground, less
+// sky, by the time the settle finishes (aiming for roughly a 60/40
+// ground/sky split at rest instead of mostly sky on first paint).
 const PARALLAX_VH = 1.4
-// Ground and the foreground trees both have shiftFraction 0 — they never
-// move, staying glued to the exact viewport bottom. Ground being static is
-// what closes the gap the other (still-shifting) layers would otherwise
-// reveal at the very bottom edge; the trees are static because the user
-// asked for the foreground trees specifically not to drift on scroll.
+const GROUND_VH = { start: 14, end: 26 } // grows on scroll, see comment above
 const PARALLAX_LAYERS = [
-  { heightVh: 55, shiftFraction: 0.1 }, // far mountains
-  { heightVh: 50, shiftFraction: 0.14 }, // mid mountains
-  { heightVh: 16, shiftFraction: 0 }, // ground — bottom safety net, stays put
-  { heightVh: 30, shiftFraction: 0 }, // foreground trees — stays put
+  { heightVh: 55, shiftFraction: 0.18 }, // far mountains
+  { heightVh: 50, shiftFraction: 0.24 }, // mid mountains
+  { heightVh: 30, shiftFraction: 0.08 }, // foreground trees — subtle rise; the growing ground strip behind it always covers the gap this opens
+  { heightVh: POND.heightVh, shiftFraction: 0.35 }, // pond — rises with the rest of the scene instead of staying pinned to the very bottom edge
 ] as const
 
 function lerp(a: number, b: number, t: number) {
@@ -384,6 +407,114 @@ function DeerSleeping() {
   )
 }
 
+// Small leaping-fish silhouette: tail fin (left) + body (right), facing the
+// direction it jumps toward.
+function Fish() {
+  return (
+    <svg width="24" height="14" viewBox="0 0 24 14">
+      <polygon points="0,7 7,3 7,11" fill="#3E6B78" />
+      <ellipse cx="15" cy="7" rx="9" ry="5.5" fill="#4E8494" />
+      <circle cx="20" cy="5.5" r="1.1" fill="#1C2A2E" />
+    </svg>
+  )
+}
+
+// Ring + droplets that flash briefly where the fish re-enters the water.
+function Splash() {
+  return (
+    <svg width="40" height="20" viewBox="0 0 40 20">
+      <ellipse cx="20" cy="14" rx="16" ry="4" fill="none" stroke="rgba(255,255,255,0.55)" strokeWidth="2" />
+      <circle cx="12" cy="8" r="1.6" fill="rgba(255,255,255,0.75)" />
+      <circle cx="27" cy="7" r="1.3" fill="rgba(255,255,255,0.7)" />
+      <circle cx="20" cy="4" r="1.1" fill="rgba(255,255,255,0.7)" />
+    </svg>
+  )
+}
+
+// Irregular water outline built from four overlapping ellipses of
+// different sizes/positions (same technique as CLOUD_SHAPES above) rather
+// than one smooth bezier blob — a single big oval reads as a "papaya"; a
+// cluster of unevenly-sized lobes reads as an actual irregular pond, and
+// SVG unions overlapping shapes cleanly with no visible seam since they
+// share the same fill. Drawn directly in POND's own viewBox.
+// One large, smooth, gently irregular blob (not a union of separate ovals —
+// overlapping ellipses each apply their own fill gradient independently, so
+// unioning them left visible seams and read as choppy patchwork instead of
+// one body of water). A single path with varied bezier control points gives
+// an asymmetric, organic outline without any seams, since it's one shape
+// with one gradient.
+const POND_PATH =
+  'M0,58 C0,38 22,16 65,9 C120,1 190,-2 265,5 C335,11 395,4 435,17 ' +
+  'C470,28 495,44 490,64 C486,84 462,99 415,102 C372,105 335,96 292,101 ' +
+  'C250,106 205,98 165,103 C122,108 72,105 35,96 C10,89 0,76 0,58 Z'
+
+// A still pond sitting on the ground line, with a fish that leaps out and
+// splashes back down every so often (held hidden for most of its loop via
+// the fish-jump keyframes, so it reads as occasional rather than periodic).
+// Dims automatically at night along with the rest of the landscape since it
+// renders before the night scrim, same as the mountains/trees/ground.
+// `containerRef` gets the small upward scroll-drift described at
+// PARALLAX_LAYERS above, so the pond rises together with the rest of the
+// scene instead of staying pinned to the very bottom edge.
+function Pond({ containerRef }: { containerRef: React.RefObject<HTMLDivElement | null> }) {
+  return (
+    <div
+      ref={containerRef}
+      className="absolute"
+      style={{
+        left: POND.left,
+        bottom: POND.bottom,
+        width: `${POND_WIDTH_VH}vh`,
+        height: `${POND.heightVh}vh`,
+      }}
+    >
+      <svg
+        width="100%"
+        height="100%"
+        viewBox={`0 0 ${POND.viewBoxW} ${POND.viewBoxH}`}
+        style={{ position: 'absolute', inset: 0, overflow: 'visible' }}
+      >
+        <defs>
+          <linearGradient id="pond-water" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#6FAEBB" />
+            <stop offset="100%" stopColor="#2C5866" />
+          </linearGradient>
+          <clipPath id="pond-clip"><path d={POND_PATH} /></clipPath>
+        </defs>
+        {/* Water — one smooth irregular blob, no bank/border around it */}
+        <path d={POND_PATH} fill="url(#pond-water)" />
+        {/* Ripple/swirl lines, clipped to the water shape */}
+        <g clipPath="url(#pond-clip)">
+          <path d="M60,40 C140,28 260,38 350,50" stroke="rgba(255,255,255,0.22)" strokeWidth="3" fill="none" strokeLinecap="round" />
+          <path d="M45,70 C160,90 320,86 420,62" stroke="rgba(255,255,255,0.16)" strokeWidth="3" fill="none" strokeLinecap="round" />
+        </g>
+        {/* Reflection highlight, gently shimmering */}
+        <ellipse cx={140} cy={24} rx={42} ry={10} fill="#CFEFF2" opacity={0.35} className="pond-shimmer" />
+        {/* Small grass tufts at the water's edge */}
+        <path d="M55,22 L58,4 L61,22 M61,22 L64,2 L67,22" stroke="#3B6E2A" strokeWidth="2" fill="none" strokeLinecap="round" />
+        <path d="M405,28 L408,10 L411,28 M411,28 L414,8 L417,28" stroke="#3B6E2A" strokeWidth="2" fill="none" strokeLinecap="round" />
+        {/* Small rocks at the edge */}
+        <circle cx="455" cy="50" r="6" fill="#8A8A85" />
+        <circle cx="445" cy="64" r="3.5" fill="#7A7A76" />
+      </svg>
+
+      <div
+        className="fish-jump"
+        style={{ position: 'absolute', left: '55%', bottom: '55%', transformOrigin: 'center bottom' }}
+      >
+        <Fish />
+      </div>
+
+      <div
+        className="fish-splash"
+        style={{ position: 'absolute', left: '55%', bottom: '51%', transformOrigin: 'center' }}
+      >
+        <Splash />
+      </div>
+    </div>
+  )
+}
+
 function smoothstep(edge0: number, edge1: number, x: number) {
   const t = clamp01((x - edge0) / (edge1 - edge0))
   return t * t * (3 - 2 * t)
@@ -393,6 +524,7 @@ export function ParallaxBackground() {
   const mtnFarRef = useRef<HTMLDivElement>(null)
   const mtnMidRef = useRef<HTMLDivElement>(null)
   const treesFgRef = useRef<HTMLDivElement>(null)
+  const pondRef = useRef<HTMLDivElement>(null)
   const groundRef = useRef<HTMLDivElement>(null)
   const skyRef = useRef<HTMLDivElement>(null)
   const sunRef = useRef<HTMLDivElement>(null)
@@ -405,7 +537,7 @@ export function ParallaxBackground() {
   const deerSleepingRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const parallaxRefs = [mtnFarRef, mtnMidRef, groundRef, treesFgRef]
+    const parallaxRefs = [mtnFarRef, mtnMidRef, treesFgRef, pondRef]
 
     // A plain scroll listener (not GSAP ScrollTrigger) for everything here —
     // ScrollTrigger's 'bottom bottom' range depends on document height, which
@@ -419,6 +551,12 @@ export function ParallaxBackground() {
         const maxShiftPx = (heightVh / 100) * window.innerHeight * shiftFraction
         ref.current.style.transform = `translateY(${-maxShiftPx * parallaxT}px)`
       })
+
+      // Ground grows taller (rather than translating) over the same settle
+      // span — see the comment above GROUND_VH for why.
+      if (groundRef.current) {
+        groundRef.current.style.height = `${GROUND_VH.start + (GROUND_VH.end - GROUND_VH.start) * parallaxT}vh`
+      }
 
       // Day/night cycle: `t` wraps every CYCLE_VH viewport-heights of scroll,
       // so the sky/sun keep cycling day → sunset → night → morning → day
@@ -563,8 +701,8 @@ export function ParallaxBackground() {
           width: '90px',
           height: '90px',
           background:
-            'radial-gradient(circle, #FFF3C4 0%, #FFDD73 45%, rgba(255,221,115,0) 75%)',
-          boxShadow: '0 0 70px 25px rgba(255,221,115,0.45)',
+            'radial-gradient(circle, #FFF3C4 0%, #FFF3C4 12%, #FFDD73 42%, rgba(255,221,115,0) 78%)',
+          boxShadow: '0 0 90px 40px rgba(255,221,115,0.3)',
         }}
       />
 
@@ -650,11 +788,11 @@ export function ParallaxBackground() {
         />
       </div>
 
-      {/* Ground */}
+      {/* Ground — grows taller over the initial scroll settle, see GROUND_VH */}
       <div
         ref={groundRef}
         className="absolute bottom-0 left-0 right-0"
-        style={{ height: '16vh' }}
+        style={{ height: `${GROUND_VH.start}vh` }}
       >
         <img
           src={`${import.meta.env.BASE_URL}silhouettes/ground.svg`}
@@ -663,14 +801,24 @@ export function ParallaxBackground() {
         />
       </div>
 
-      {/* Deer — walks along the ground line by day; the walk pauses and it
-          crossfades to a lying-down sleeping pose at night (see sleepAmount
-          above). The tree silhouettes render after it (below) so it passes
-          behind trunks/canopies as it crosses. */}
+      {/* Pond — sits on the ground line; fish leaps out every so often */}
+      <Pond containerRef={pondRef} />
+
+      {/* Deer — walks the tree-covered stretch of ground by day; the walk
+          pauses and it crossfades to a lying-down sleeping pose at night
+          (see sleepAmount above). The tree silhouettes render after it
+          (below) so it passes behind trunks/canopies as it crosses, reading
+          as walking between the trees rather than in front of them.
+          Anchored close to the true viewport bottom so its hooves read as
+          planted in the grass. `left: 35%` plus the narrower deer-walk
+          range in index.css (-6vw to 78vw) keeps its whole route to the
+          right of the pond — trees-far.svg leaves the ground clear of trees
+          before x=500/1440 (~35% across) specifically because that's the
+          pond's footprint, so this lane starts right where the trees do. */}
       <div
         ref={bgDeerRef}
         className="bg-deer"
-        style={{ bottom: '5%', left: 0, width: '110px', height: '78px' }}
+        style={{ bottom: '10px', left: '35%', width: '110px', height: '78px' }}
       >
         <div ref={deerStandingRef} style={{ position: 'absolute', inset: 0, opacity: 1 }}>
           <Deer />
@@ -690,6 +838,7 @@ export function ParallaxBackground() {
           src={`${import.meta.env.BASE_URL}silhouettes/trees-far.svg`}
           alt=""
           className="w-full h-full object-bottom object-cover"
+          style={{ transform: 'scaleX(1.08)' }}
         />
       </div>
 

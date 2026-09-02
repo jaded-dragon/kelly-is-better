@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import type { CitySuggestion } from '../types/trail'
 import { searchCitySuggestions } from '../services/nominatim'
 
-const DEBOUNCE_MS = 400
+const DEBOUNCE_MS = 120
 const MIN_QUERY_LENGTH = 2
 
 export function useCitySuggestions(query: string, enabled: boolean) {

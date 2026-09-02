@@ -98,7 +98,12 @@ export function TrailPin({ trail, isHiked, onToggleHiked, isRight = false }: Tra
           <p
             className="text-xs whitespace-nowrap overflow-hidden"
             title={trail.location}
-            style={{ color: 'var(--bark)', opacity: isHiked ? 0.6 : 0.8, textOverflow: 'ellipsis' }}
+            style={{
+              color: '#F7F2EC',
+              opacity: isHiked ? 0.55 : 0.85,
+              textOverflow: 'ellipsis',
+              textShadow: '0 1px 3px rgba(20,15,10,0.5), 0 0 8px rgba(20,15,10,0.3)',
+            }}
           >
             {trail.location}
           </p>

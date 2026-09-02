@@ -79,6 +79,26 @@ body {
   animation: tooltipIn 0.18s ease-out forwards;
 }
 
+/* Suggestions dropdown slide-open — grows from the bottom edge of the
+   search pill like a panel extending out of it, rather than fading in
+   as a separate floating box. max-height animates past the tallest
+   realistic content height; since actual content is shorter, the box
+   stops growing the moment it reaches its natural height. */
+@keyframes dropdownSlide {
+  from {
+    max-height: 0;
+    opacity: 0;
+  }
+  to {
+    max-height: 360px;
+    opacity: 1;
+  }
+}
+
+.dropdown-enter {
+  animation: dropdownSlide 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 /* Checkbox bounce animation */
 @keyframes checkBounce {
   0% { transform: scale(1); }
@@ -117,14 +137,6 @@ body {
   50% { transform: scaleY(0.7); }
 }
 
-@keyframes particle-rise {
-  0% { transform: translateY(0) scale(0.8); opacity: 0; }
-  12% { opacity: 0.9; }
-  50% { transform: translateY(-60px) scale(1.1); opacity: 1; }
-  88% { opacity: 0.4; }
-  100% { transform: translateY(-130px) scale(0.8); opacity: 0; }
-}
-
 .bg-cloud {
   position: absolute;
   animation: cloud-drift linear infinite;
@@ -141,10 +153,14 @@ body {
 }
 
 /* vw units for the same reason as cloud-drift/bird-drift above — % would be
-   relative to the deer's own tiny width and barely move it at all. */
+   relative to the deer's own tiny width and barely move it at all. The
+   range is deliberately narrower than the full viewport and offset by the
+   .bg-deer `left` in ParallaxBackground.tsx — together they confine the
+   whole walk to the tree-covered stretch of ground (see the comment on
+   .bg-deer below), well clear of the pond, which sits further left. */
 @keyframes deer-walk {
-  from { transform: translateX(-12vw); }
-  to { transform: translateX(112vw); }
+  from { transform: translateX(-6vw); }
+  to { transform: translateX(78vw); }
 }
 
 @keyframes deer-bob {
@@ -159,15 +175,15 @@ body {
 
 .bg-deer {
   position: absolute;
-  animation: deer-walk 85s linear infinite;
+  animation: deer-walk 55s linear infinite;
 }
 
 .deer-bob {
-  animation: deer-bob 0.5s ease-in-out infinite;
+  animation: deer-bob 0.33s ease-in-out infinite;
 }
 
 .deer-leg {
-  animation: deer-leg-swing 0.5s ease-in-out infinite;
+  animation: deer-leg-swing 0.33s ease-in-out infinite;
 }
 
 .bg-sun {
@@ -200,6 +216,14 @@ body {
   animation: star-twinkle ease-in-out infinite;
 }
 
+@keyframes particle-rise {
+  0% { transform: translateY(0) scale(0.8); opacity: 0; }
+  12% { opacity: 0.9; }
+  50% { transform: translateY(-60px) scale(1.1); opacity: 1; }
+  88% { opacity: 0.4; }
+  100% { transform: translateY(-130px) scale(0.8); opacity: 0; }
+}
+
 .bg-particle {
   position: absolute;
   border-radius: 9999px;
@@ -209,6 +233,45 @@ body {
     0 0 6px 3px rgba(233,255,120,1),
     0 0 11px 5.5px rgba(210,255,70,0.9);
   animation: particle-rise ease-in-out infinite;
+}
+
+/* Pond fish — leaps out of the water and splashes back down every so
+   often. Hidden for most of the loop (0–80%) so the jump itself reads as
+   an occasional event rather than a mechanical repeat. */
+@keyframes fish-jump {
+  0%, 80% { transform: translateY(0) rotate(0deg); opacity: 0; }
+  82% { opacity: 1; transform: translateY(0) rotate(-8deg); }
+  87% { transform: translateY(-32px) rotate(10deg); }
+  91% { transform: translateY(-40px) rotate(45deg); }
+  95% { transform: translateY(-6px) rotate(75deg); opacity: 1; }
+  97% { transform: translateY(2px) rotate(85deg); opacity: 0; }
+  100% { transform: translateY(0) rotate(0deg); opacity: 0; }
+}
+
+.fish-jump {
+  animation: fish-jump 11s ease-in-out infinite;
+}
+
+/* Timed to flash right as fish-jump lands (95–100% above). */
+@keyframes fish-splash {
+  0%, 93% { transform: scale(0); opacity: 0; }
+  95% { transform: scale(0.5); opacity: 0.9; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+.fish-splash {
+  animation: fish-splash 11s ease-in-out infinite;
+}
+
+@keyframes pond-shimmer {
+  0%, 100% { opacity: 0.25; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.05); }
+}
+
+.pond-shimmer {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pond-shimmer 5s ease-in-out infinite;
 }
 
 /* Depth marker line */

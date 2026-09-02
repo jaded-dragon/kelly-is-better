@@ -6,20 +6,41 @@
       <path d="M35,44 C19,64 10,80 6,93 C19,88 27,88 35,91 C43,88 51,88 64,93 C60,80 51,64 35,44 Z" fill="currentColor"/>
       <path d="M35,76 C17,96 8,110 4,120 C17,115 26,115 35,118 C44,115 53,115 66,120 C62,110 53,96 35,76 Z" fill="currentColor"/>
     </symbol>
+    <!-- Bushier, shorter two-tier pine — a different silhouette (not just a
+         resized copy of pineFg) so the tree line reads as mixed growth
+         rather than one template stamped out at different scales. -->
+    <symbol id="pineFgWide" viewBox="0 0 70 130">
+      <rect x="30" y="90" width="10" height="40" fill="currentColor"/>
+      <path d="M35,22 C17,40 6,54 2,66 C16,61 26,61 35,63 C44,61 54,61 68,66 C64,54 53,40 35,22 Z" fill="currentColor"/>
+      <path d="M35,54 C15,72 4,86 0,98 C15,93 25,93 35,95 C45,93 55,93 70,98 C66,86 55,72 35,54 Z" fill="currentColor"/>
+    </symbol>
   </defs>
+  <!-- Density gradient left-to-right: nothing before x=500 (pond zone, see
+       POND in ParallaxBackground.tsx), sparse trees across the middle
+       (500-860), then a looser, wider-spaced stand of trees from ~900
+       through and past x=1440 (the viewBox's right edge) so the treeline
+       bleeds off the right side of the page instead of stopping mid-canvas.
+       Two symbols (pineFg / pineFgWide) alternate, and each tree's
+       width:height ratio is nudged off the symbol's native ~0.54 (some
+       narrower/taller, some squatter/wider) so no two trees read as the
+       same template just resized. -->
   <g color="#12291B">
-    <use href="#pineFg" x="-20" y="60" width="150" height="280"/>
-    <use href="#pineFg" x="230" y="90" width="110" height="205"/>
-    <use href="#pineFg" x="520" y="70" width="135" height="251"/>
-    <use href="#pineFg" x="830" y="95" width="105" height="195"/>
-    <use href="#pineFg" x="1120" y="65" width="140" height="260"/>
-    <use href="#pineFg" x="1360" y="85" width="115" height="214"/>
+    <use href="#pineFg" x="500" y="65" width="140" height="260"/>
+    <use href="#pineFgWide" x="690" y="95" width="100" height="205"/>
+    <use href="#pineFg" x="860" y="68" width="150" height="252"/>
+    <use href="#pineFgWide" x="1010" y="100" width="95" height="188"/>
+    <use href="#pineFg" x="1150" y="60" width="130" height="262"/>
+    <use href="#pineFgWide" x="1290" y="88" width="115" height="200"/>
+    <use href="#pineFg" x="1420" y="52" width="150" height="272"/>
+    <use href="#pineFgWide" x="1560" y="85" width="120" height="212"/>
   </g>
   <g color="#0A1B11">
-    <use href="#pineFg" x="90" y="130" width="120" height="223"/>
-    <use href="#pineFg" x="380" y="150" width="95" height="177"/>
-    <use href="#pineFg" x="680" y="125" width="125" height="232"/>
-    <use href="#pineFg" x="980" y="145" width="100" height="186"/>
-    <use href="#pineFg" x="1250" y="128" width="118" height="219"/>
+    <use href="#pineFgWide" x="610" y="142" width="115" height="207"/>
+    <use href="#pineFg" x="780" y="155" width="90" height="172"/>
+    <use href="#pineFgWide" x="940" y="128" width="128" height="222"/>
+    <use href="#pineFg" x="1090" y="150" width="92" height="183"/>
+    <use href="#pineFgWide" x="1230" y="133" width="118" height="207"/>
+    <use href="#pineFg" x="1370" y="115" width="132" height="233"/>
+    <use href="#pineFgWide" x="1500" y="148" width="102" height="182"/>
   </g>
 </svg>

@@ -10,10 +10,10 @@ export function DistanceTag({ km }: DistanceTagProps) {
     <span
       className="text-xs px-2 py-0.5 rounded-full shrink-0"
       style={{
-        background: 'rgba(86,168,110,0.18)',
-        color: 'var(--sage)',
+        color: '#FFFFFF',
         letterSpacing: '0.02em',
         fontWeight: 500,
+        textShadow: '0 1px 3px rgba(20,15,10,0.55), 0 0 10px rgba(20,15,10,0.35)',
       }}
     >
       {formatDistance(km)} away

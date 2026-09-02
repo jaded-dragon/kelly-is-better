@@ -32,6 +32,10 @@ export interface UserLocation {
   lat: number
   lng: number
   displayName: string
+  // Set only when the query itself returned nothing and a spellcheck fallback
+  // found a nearby-spelled place instead — the properly-cased name of that
+  // place, e.g. "Holmdel" when the user typed "holndel".
+  correctedQuery?: string
 }
 
 export interface NominatimResult {

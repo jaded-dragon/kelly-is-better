@@ -4,10 +4,10 @@ import { formatTime } from '../../utils/timeEstimate'
 import { crowdednessLabel } from '../../utils/recommendations'
 
 const DIFFICULTY_CONFIG = {
-  easy: { label: 'Easy', color: '#78E498', bg: 'rgba(14,40,24,0.2)' },
-  moderate: { label: 'Moderate', color: '#D4A85A', bg: 'rgba(30,22,8,0.2)' },
-  hard: { label: 'Hard', color: '#E89080', bg: 'rgba(34,16,12,0.2)' },
-  expert: { label: 'Expert', color: '#E86068', bg: 'rgba(30,8,10,0.2)' },
+  easy: { label: 'Easy', color: '#78E498', bg: 'rgba(14,40,24,0.55)' },
+  moderate: { label: 'Moderate', color: '#D4A85A', bg: 'rgba(30,22,8,0.55)' },
+  hard: { label: 'Hard', color: '#E89080', bg: 'rgba(34,16,12,0.55)' },
+  expert: { label: 'Expert', color: '#E86068', bg: 'rgba(30,8,10,0.55)' },
 } as const
 
 const TRAIL_TYPE_ICONS: Record<Trail['trailType'], string> = {

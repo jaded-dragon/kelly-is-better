@@ -85,10 +85,13 @@ export default function App() {
           </div>
           <form onSubmit={handleSearch} className="flex-1" style={{ position: 'relative' }}>
             <div
-              className="flex items-center rounded-full px-3.5 py-2 gap-2"
+              className="flex items-center px-3.5 py-2 gap-2"
               style={{
                 background: 'rgba(255,255,255,0.07)',
                 border: '1.5px solid rgba(255,255,255,0.15)',
+                borderRadius: activeInput === 'nav' && suggestions.length > 0 ? '18px 18px 0 0' : '9999px',
+                borderBottom: activeInput === 'nav' && suggestions.length > 0 ? 'none' : '1.5px solid rgba(255,255,255,0.15)',
+                transition: 'border-radius 0.15s ease',
               }}
             >
               <MapPin size={13} style={{ color: 'var(--sage)', flexShrink: 0 }} />
@@ -122,7 +125,7 @@ export default function App() {
               </button>
             </div>
             {activeInput === 'nav' && (
-              <SuggestionsDropdown suggestions={suggestions} onSelect={handleSelectSuggestion} />
+              <SuggestionsDropdown suggestions={suggestions} onSelect={handleSelectSuggestion} variant="nav" />
             )}
           </form>
         </div>
@@ -233,13 +236,15 @@ export default function App() {
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                borderRadius: '9999px',
+                borderRadius: activeInput === 'hero' && suggestions.length > 0 ? '26px 26px 0 0' : '9999px',
                 padding: '0.55rem 0.55rem 0.55rem 1.2rem',
                 gap: '0.6rem',
                 background: 'rgba(30,20,55,0.38)',
                 border: '1.5px solid rgba(255,255,255,0.45)',
+                borderBottom: activeInput === 'hero' && suggestions.length > 0 ? 'none' : '1.5px solid rgba(255,255,255,0.45)',
                 backdropFilter: 'blur(12px)',
                 boxShadow: '0 4px 24px rgba(42,27,84,0.35)',
+                transition: 'border-radius 0.15s ease',
               }}
             >
               <MapPin size={15} style={{ color: 'rgba(255,255,255,0.75)', flexShrink: 0 }} />
@@ -297,12 +302,12 @@ export default function App() {
             <p
               style={{
                 marginTop: '1.5rem',
-                color: '#2E4066',
+                color: '#F7F2EC',
                 fontSize: '0.75rem',
                 letterSpacing: '0.08em',
                 textTransform: 'uppercase',
                 fontWeight: 500,
-                textShadow: '0 1px 8px rgba(255,255,255,0.4)',
+                textShadow: '0 1px 3px rgba(20,15,10,0.55), 0 0 10px rgba(20,15,10,0.35)',
               }}
             >
               {trails.length} trails found · scroll to explore ↓
@@ -321,14 +326,15 @@ export default function App() {
             flexDirection: 'column',
             alignItems: 'center',
             gap: '0.4rem',
-            color: 'rgba(46,64,102,0.65)',
+            color: 'rgba(255,255,255,0.92)',
+            textShadow: '0 1px 4px rgba(0,0,0,0.55)',
             zIndex: 2,
             cursor: location ? 'pointer' : 'default',
             userSelect: 'none',
           }}
           onClick={() => location && resultsRef.current?.scrollIntoView({ behavior: 'smooth' })}
         >
-          <svg width="18" height="30" viewBox="0 0 24 40" fill="none" aria-hidden>
+          <svg width="18" height="30" viewBox="0 0 24 40" fill="none" aria-hidden style={{ filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.55))' }}>
             <line x1="12" y1="2" x2="12" y2="26" stroke="currentColor" strokeWidth="1.5" />
             <polyline points="5,20 12,28 19,20" stroke="currentColor" strokeWidth="1.5" fill="none" />
           </svg>
@@ -338,7 +344,7 @@ export default function App() {
                 fontSize: '0.62rem',
                 letterSpacing: '0.14em',
                 textTransform: 'uppercase',
-                fontWeight: 500,
+                fontWeight: 600,
               }}
             >
               search to discover
@@ -353,6 +359,21 @@ export default function App() {
 
           {/* Banners */}
           <div className="max-w-2xl mx-auto px-6 pt-2">
+            {!error && location?.correctedQuery && (
+              <div
+                className="w-fit mx-auto px-4 py-3 rounded-xl text-xs text-center mb-2"
+                style={{
+                  background: 'rgba(212,136,152,0.16)',
+                  border: '1px solid rgba(212,136,152,0.6)',
+                  color: 'var(--mauve)',
+                  backdropFilter: 'blur(8px)',
+                  boxShadow: '0 4px 18px rgba(212,136,152,0.15)',
+                }}
+              >
+                Showing results for <span className="font-semibold" style={{ color: 'var(--earth)' }}>{location.correctedQuery}</span>
+                {' '}— not "{location.query}"
+              </div>
+            )}
             {isDemo && !error && (
               <div
                 className="px-4 py-3 rounded-xl text-xs text-center"
@@ -368,7 +389,13 @@ export default function App() {
               </div>
             )}
             {error && <ErrorBanner error={error} />}
-            {loading && <div className="mt-4"><LoadingState /></div>}
+            {loading && (
+              <div className="mt-4 flex justify-center">
+                <div className="w-full max-w-md">
+                  <LoadingState />
+                </div>
+              </div>
+            )}
             {!loading && !error && trails.length === 0 && location && (
               <EmptyState query={location.query} />
             )}
@@ -379,10 +406,11 @@ export default function App() {
             <p
               className="text-xs text-center mt-3 mb-1"
               style={{
-                color: 'var(--bark)',
+                color: '#F7F2EC',
                 letterSpacing: '0.07em',
                 textTransform: 'uppercase',
                 fontWeight: 500,
+                textShadow: '0 1px 3px rgba(20,15,10,0.55), 0 0 10px rgba(20,15,10,0.35)',
               }}
             >
               {trails.length} trails · nearest first · hover a dot for details
