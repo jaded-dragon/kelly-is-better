@@ -152,17 +152,6 @@ body {
   transform-origin: center;
 }
 
-/* vw units for the same reason as cloud-drift/bird-drift above — % would be
-   relative to the deer's own tiny width and barely move it at all. The
-   range is deliberately narrower than the full viewport and offset by the
-   .bg-deer `left` in ParallaxBackground.tsx — together they confine the
-   whole walk to the tree-covered stretch of ground (see the comment on
-   .bg-deer below), well clear of the pond, which sits further left. */
-@keyframes deer-walk {
-  from { transform: translateX(-6vw); }
-  to { transform: translateX(78vw); }
-}
-
 @keyframes deer-bob {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-3px); }
@@ -173,9 +162,14 @@ body {
   50% { transform: rotate(10deg); }
 }
 
+/* Position (translateX/scaleX/dip) is driven every frame by the deer patrol
+   effect in ParallaxBackground.tsx, not a CSS animation — a fixed keyframe
+   loop can't express "turn around at each end" or "occasionally stop and
+   drink". `.deer-paused` is toggled by that same effect whenever the deer
+   isn't in its 'walk' phase (turning, drinking, or it's night), freezing
+   the leg/bob cycle so it doesn't keep striding in place. */
 .bg-deer {
   position: absolute;
-  animation: deer-walk 55s linear infinite;
 }
 
 .deer-bob {
@@ -184,6 +178,11 @@ body {
 
 .deer-leg {
   animation: deer-leg-swing 0.33s ease-in-out infinite;
+}
+
+.deer-paused .deer-bob,
+.deer-paused .deer-leg {
+  animation-play-state: paused;
 }
 
 .bg-sun {

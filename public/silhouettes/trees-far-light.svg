@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 340" preserveAspectRatio="xMidYMax slice">
+  <defs>
+    <symbol id="pineFg" viewBox="0 0 70 130">
+      <rect x="30" y="104" width="10" height="26" fill="currentColor"/>
+      <path d="M35,14 C21,34 13,48 9,61 C20,57 27,57 35,59 C43,57 50,57 61,61 C57,48 49,34 35,14 Z" fill="currentColor"/>
+      <path d="M35,44 C19,64 10,80 6,93 C19,88 27,88 35,91 C43,88 51,88 64,93 C60,80 51,64 35,44 Z" fill="currentColor"/>
+      <path d="M35,76 C17,96 8,110 4,120 C17,115 26,115 35,118 C44,115 53,115 66,120 C62,110 53,96 35,76 Z" fill="currentColor"/>
+    </symbol>
+    <symbol id="pineFgWide" viewBox="0 0 70 130">
+      <rect x="30" y="90" width="10" height="40" fill="currentColor"/>
+      <path d="M35,22 C17,40 6,54 2,66 C16,61 26,61 35,63 C44,61 54,61 68,66 C64,54 53,40 35,22 Z" fill="currentColor"/>
+      <path d="M35,54 C15,72 4,86 0,98 C15,93 25,93 35,95 C45,93 55,93 70,98 C66,86 55,72 35,54 Z" fill="currentColor"/>
+    </symbol>
+  </defs>
+  <!-- Lighter-shade group split out of trees-far.svg into its own file so it
+       can render UNDERNEATH the deer in the DOM, while trees-far-dark.svg
+       renders OVER it — see the "Deer patrol" comment in
+       ParallaxBackground.tsx for why. Positions/sizes are unchanged from the
+       combined file, this is just the #12291B group in isolation. -->
+  <g color="#12291B">
+    <use href="#pineFg" x="500" y="65" width="140" height="260"/>
+    <use href="#pineFgWide" x="690" y="95" width="100" height="205"/>
+    <use href="#pineFg" x="860" y="68" width="150" height="252"/>
+    <use href="#pineFgWide" x="1010" y="100" width="95" height="188"/>
+    <use href="#pineFg" x="1150" y="60" width="130" height="262"/>
+    <use href="#pineFgWide" x="1290" y="88" width="115" height="200"/>
+    <use href="#pineFg" x="1420" y="52" width="150" height="272"/>
+    <use href="#pineFgWide" x="1560" y="85" width="120" height="212"/>
+  </g>
+</svg>

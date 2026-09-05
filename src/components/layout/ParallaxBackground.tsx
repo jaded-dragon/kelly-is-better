@@ -122,7 +122,13 @@ const GROUND_VH = { start: 14, end: 26 } // grows on scroll, see comment above
 const PARALLAX_LAYERS = [
   { heightVh: 55, shiftFraction: 0.18 }, // far mountains
   { heightVh: 50, shiftFraction: 0.24 }, // mid mountains
-  { heightVh: 30, shiftFraction: 0.08 }, // foreground trees — subtle rise; the growing ground strip behind it always covers the gap this opens
+  // Foreground trees are split into two DOM layers (light/dark, see the
+  // "Deer patrol" section) so the deer can render between them, but both
+  // still need to drift in lockstep to read as one continuous treeline —
+  // same heightVh/shiftFraction, duplicated rather than shared, since
+  // parallaxRefs below is matched to this array by plain index.
+  { heightVh: 30, shiftFraction: 0.08 }, // foreground trees — light/front group
+  { heightVh: 30, shiftFraction: 0.08 }, // foreground trees — dark/back group
   { heightVh: POND.heightVh, shiftFraction: 0.35 }, // pond — rises with the rest of the scene instead of staying pinned to the very bottom edge
 ] as const
 
@@ -412,9 +418,9 @@ function DeerSleeping() {
 function Fish() {
   return (
     <svg width="24" height="14" viewBox="0 0 24 14">
-      <polygon points="0,7 7,3 7,11" fill="#3E6B78" />
-      <ellipse cx="15" cy="7" rx="9" ry="5.5" fill="#4E8494" />
-      <circle cx="20" cy="5.5" r="1.1" fill="#1C2A2E" />
+      <polygon points="0,7 7,3 7,11" fill="#D4621E" />
+      <ellipse cx="15" cy="7" rx="9" ry="5.5" fill="#F0812E" />
+      <circle cx="20" cy="5.5" r="1.1" fill="#3A1F0D" />
     </svg>
   )
 }
@@ -520,10 +526,35 @@ function smoothstep(edge0: number, edge1: number, x: number) {
   return t * t * (3 - 2 * t)
 }
 
+// A short symmetric ramp-up/hold/ramp-down shape (0 → 1 → 0) used for the
+// drink dip below: rises over the first `edge` fraction of the phase, holds
+// at 1, then eases back down over the last `edge` fraction.
+function trapezoid(p: number, edge: number) {
+  return clamp01(Math.min(p / edge, (1 - p) / edge))
+}
+
+// ── Deer patrol ───────────────────────────────────────────────────────────
+// The deer walks back and forth between the pond's edge and a far point to
+// the right, turning around at each end (with a brief turning animation)
+// instead of ever teleporting. Every DEER_DRINK_EVERY-th time it reaches the
+// pond edge, it pauses there and drinks before turning around. All of this
+// is driven by a requestAnimationFrame loop (see the effect below) rather
+// than a CSS keyframe animation, since a fixed left/right loop can't express
+// "turn around" or "occasionally stop and drink" — those need real state.
+const DEER_POND_EDGE_VW = 30 // left turnaround point, at the grass/water line
+const DEER_FAR_EDGE_VW = 85 // right turnaround point
+const DEER_WALK_SPEED_VW_PER_S = 1.8
+const DEER_TURN_DURATION_S = 0.6
+const DEER_DRINK_DURATION_S = 3
+const DEER_DRINK_EVERY = 3
+
+type DeerPhase = 'walk' | 'turn' | 'drink'
+
 export function ParallaxBackground() {
   const mtnFarRef = useRef<HTMLDivElement>(null)
   const mtnMidRef = useRef<HTMLDivElement>(null)
-  const treesFgRef = useRef<HTMLDivElement>(null)
+  const treesFgLightRef = useRef<HTMLDivElement>(null)
+  const treesFgDarkRef = useRef<HTMLDivElement>(null)
   const pondRef = useRef<HTMLDivElement>(null)
   const groundRef = useRef<HTMLDivElement>(null)
   const skyRef = useRef<HTMLDivElement>(null)
@@ -535,9 +566,13 @@ export function ParallaxBackground() {
   const bgDeerRef = useRef<HTMLDivElement>(null)
   const deerStandingRef = useRef<HTMLDivElement>(null)
   const deerSleepingRef = useRef<HTMLDivElement>(null)
+  // Shared with the deer patrol effect below so it can pause without this
+  // (scroll-driven) effect and that (rAF-driven) one needing to know about
+  // each other beyond this one value.
+  const nightAmountRef = useRef(0)
 
   useEffect(() => {
-    const parallaxRefs = [mtnFarRef, mtnMidRef, treesFgRef, pondRef]
+    const parallaxRefs = [mtnFarRef, mtnMidRef, treesFgLightRef, treesFgDarkRef, pondRef]
 
     // A plain scroll listener (not GSAP ScrollTrigger) for everything here —
     // ScrollTrigger's 'bottom bottom' range depends on document height, which
@@ -652,9 +687,9 @@ export function ParallaxBackground() {
       if (deerSleepingRef.current) {
         deerSleepingRef.current.style.opacity = String(sleepAmount)
       }
-      if (bgDeerRef.current) {
-        bgDeerRef.current.style.animationPlayState = nightAmount > 0.5 ? 'paused' : 'running'
-      }
+      // Read by the deer patrol effect below, which pauses the walk itself
+      // once this crosses the same 0.5 threshold the sleep crossfade uses.
+      nightAmountRef.current = nightAmount
     }
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
@@ -662,6 +697,96 @@ export function ParallaxBackground() {
     return () => {
       window.removeEventListener('scroll', onScroll)
     }
+  }, [])
+
+  // Deer patrol — separate from the scroll effect above since this one runs
+  // on real elapsed time (requestAnimationFrame), not scroll position. State
+  // lives in a plain ref (not React state) since it updates every frame and
+  // is applied straight to the DOM, same pattern as the scroll effect.
+  useEffect(() => {
+    const deer = {
+      x: 55, // start mid-patrol so it doesn't need an off-screen entrance
+      dir: 1 as 1 | -1,
+      turnFrom: 1 as 1 | -1,
+      turnTo: 1 as 1 | -1,
+      phase: 'walk' as DeerPhase,
+      phaseElapsed: 0,
+      pondVisits: 0,
+    }
+
+    function startTurn(to: 1 | -1) {
+      deer.turnFrom = deer.dir
+      deer.turnTo = to
+      deer.phase = 'turn'
+      deer.phaseElapsed = 0
+    }
+
+    let raf = 0
+    let last = performance.now()
+    function tick(now: number) {
+      const dt = Math.min((now - last) / 1000, 0.1) // clamp so a backgrounded tab doesn't jump the deer on return
+      last = now
+      const paused = nightAmountRef.current > 0.5
+
+      if (!paused) {
+        if (deer.phase === 'walk') {
+          deer.x += deer.dir * DEER_WALK_SPEED_VW_PER_S * dt
+          if (deer.dir < 0 && deer.x <= DEER_POND_EDGE_VW) {
+            deer.x = DEER_POND_EDGE_VW
+            deer.pondVisits += 1
+            if (deer.pondVisits % DEER_DRINK_EVERY === 0) {
+              deer.phase = 'drink'
+              deer.phaseElapsed = 0
+            } else {
+              startTurn(1)
+            }
+          } else if (deer.dir > 0 && deer.x >= DEER_FAR_EDGE_VW) {
+            deer.x = DEER_FAR_EDGE_VW
+            startTurn(-1)
+          }
+        } else if (deer.phase === 'turn') {
+          deer.phaseElapsed += dt
+          if (deer.phaseElapsed >= DEER_TURN_DURATION_S) {
+            deer.dir = deer.turnTo
+            deer.phase = 'walk'
+          }
+        } else if (deer.phase === 'drink') {
+          deer.phaseElapsed += dt
+          if (deer.phaseElapsed >= DEER_DRINK_DURATION_S) {
+            startTurn(1)
+          }
+        }
+      }
+
+      let scaleX: number = deer.dir
+      let hopY = 0
+      let dipY = 0
+      if (deer.phase === 'turn') {
+        const p = clamp01(deer.phaseElapsed / DEER_TURN_DURATION_S)
+        // Crosses through 0 at the midpoint — the deer briefly appears
+        // edge-on, like a paper cutout pivoting, then unfolds facing the
+        // other way. Reads as a deliberate "stop, turn, go" beat. (Not the
+        // shared `lerp` above — that one rounds to integers for RGB
+        // channels, which would make this snap between -1/0/1 instead of
+        // sliding smoothly through it.)
+        scaleX = deer.turnFrom + (deer.turnTo - deer.turnFrom) * p
+        hopY = -Math.sin(p * Math.PI) * 8
+      } else if (deer.phase === 'drink') {
+        const p = clamp01(deer.phaseElapsed / DEER_DRINK_DURATION_S)
+        dipY = trapezoid(p, 0.2) * 10
+      }
+
+      if (bgDeerRef.current) {
+        bgDeerRef.current.style.transform =
+          `translateX(${deer.x}vw) translateY(${hopY + dipY}px) scaleX(${scaleX})`
+        bgDeerRef.current.classList.toggle('deer-paused', deer.phase !== 'walk' || paused)
+      }
+
+      raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+
+    return () => cancelAnimationFrame(raf)
   }, [])
 
   return (
@@ -804,21 +929,43 @@ export function ParallaxBackground() {
       {/* Pond — sits on the ground line; fish leaps out every so often */}
       <Pond containerRef={pondRef} />
 
-      {/* Deer — walks the tree-covered stretch of ground by day; the walk
-          pauses and it crossfades to a lying-down sleeping pose at night
-          (see sleepAmount above). The tree silhouettes render after it
-          (below) so it passes behind trunks/canopies as it crosses, reading
-          as walking between the trees rather than in front of them.
-          Anchored close to the true viewport bottom so its hooves read as
-          planted in the grass. `left: 35%` plus the narrower deer-walk
-          range in index.css (-6vw to 78vw) keeps its whole route to the
-          right of the pond — trees-far.svg leaves the ground clear of trees
-          before x=500/1440 (~35% across) specifically because that's the
-          pond's footprint, so this lane starts right where the trees do. */}
+      {/* Foreground trees, light/front group — renders BEFORE (underneath)
+          the deer, so the deer walks in front of these. Split out of what
+          used to be one trees-far.svg specifically so the deer could be
+          sandwiched between the two shades (see the dark group below and
+          the deer patrol comment) rather than uniformly behind or in front
+          of every tree. */}
+      <div
+        ref={treesFgLightRef}
+        className="absolute bottom-0 left-0 right-0"
+        style={{ height: '30vh' }}
+      >
+        <img
+          src={`${import.meta.env.BASE_URL}silhouettes/trees-far-light.svg`}
+          alt=""
+          className="w-full h-full object-bottom object-cover"
+          style={{ transform: 'scaleX(1.08)' }}
+        />
+      </div>
+
+      {/* Deer — patrols back and forth between the pond's edge and a point
+          further right (DEER_POND_EDGE_VW/DEER_FAR_EDGE_VW above), turning
+          around at each end instead of teleporting, and every few trips to
+          the pond it stops and drinks (see the deer patrol effect above —
+          x/facing/dip are all driven from there via transform, not left/CSS
+          animation, hence no `left` here). The walk also pauses and it
+          crossfades to a lying-down sleeping pose at night (see sleepAmount
+          above). Sandwiched between the two tree-shade layers (light above,
+          dark below) so it passes behind the darker/back trees and in front
+          of the lighter/front trees, instead of uniformly behind or in
+          front of the whole treeline. Anchored close to the true viewport
+          bottom so its hooves read as planted in the grass; transformOrigin
+          is bottom-center so the turn/drink dip pivot at its feet rather
+          than its middle. */}
       <div
         ref={bgDeerRef}
         className="bg-deer"
-        style={{ bottom: '10px', left: '35%', width: '110px', height: '78px' }}
+        style={{ bottom: '10px', left: 0, width: '110px', height: '78px', transformOrigin: 'bottom center' }}
       >
         <div ref={deerStandingRef} style={{ position: 'absolute', inset: 0, opacity: 1 }}>
           <Deer />
@@ -828,14 +975,15 @@ export function ParallaxBackground() {
         </div>
       </div>
 
-      {/* Foreground tree silhouettes — closest layer, stays put on scroll */}
+      {/* Foreground trees, dark/back group — renders AFTER (on top of) the
+          deer, so the deer walks behind these. See the light group above. */}
       <div
-        ref={treesFgRef}
+        ref={treesFgDarkRef}
         className="absolute bottom-0 left-0 right-0"
         style={{ height: '30vh' }}
       >
         <img
-          src={`${import.meta.env.BASE_URL}silhouettes/trees-far.svg`}
+          src={`${import.meta.env.BASE_URL}silhouettes/trees-far-dark.svg`}
           alt=""
           className="w-full h-full object-bottom object-cover"
           style={{ transform: 'scaleX(1.08)' }}
